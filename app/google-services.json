@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "335054244563",
+    "project_id": "flashcard-94a6a",
+    "storage_bucket": "flashcard-94a6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335054244563:android:98eb7ff2932f2caf562226",
+        "android_client_info": {
+          "package_name": "com.example.flashcard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335054244563-3mtp78tqqdt56aa9q9t076hqn8t3caji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABE5bzX64bncjnkt5buyv0SyRRDNgFlC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335054244563-3mtp78tqqdt56aa9q9t076hqn8t3caji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
