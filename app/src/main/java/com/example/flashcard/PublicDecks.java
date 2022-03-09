@@ -31,6 +31,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,8 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
     private boolean isGuest = false;
     private boolean inPublic = true;
 
-    FirebaseDatabase rootRef = FirebaseDatabase.getInstance();
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-    User usr = new User();
+    FirebaseDatabase rootRef;
+    FirebaseAuth mAuth;
 
 
     private ImageView addDeck;
@@ -58,22 +57,30 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
     private SearchView svDecks;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_public_decks);
 
+        rootRef = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
         //check if current user is a guest:
-
-        readAllDecks(rootRef.getReference("Decks"), new OnGetDataListener() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onFailure() {
-            }
-        });
-
         isGuest = checkGuest();
+        if (!isGuest) {
+            DatabaseReference thisUser = rootRef.getReference("Users").child(mAuth.getCurrentUser().getUid())
+                    .child("MyDecks");
+            getUserData(thisUser, new OnGetDataListener() {
+
+                @Override
+                public void onSuccess(DataSnapshot dataSnapshot) {
+                }
+
+                @Override
+                public void onFailure() {
+                }
+            });
+        }
+        allDecks = (ArrayList<Deck>) getIntent().getSerializableExtra("allDecks");
+
 
         //get the users decks
         if (!isGuest) {
@@ -94,6 +101,8 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
         addDeck.setOnClickListener(this);
         publicDecks.setOnClickListener(this);
         logout.setOnClickListener(this);
+
+
 
         if (inPublic){
             DeckListAdapter adapter = new DeckListAdapter(isGuest,this, R.layout.deck_lv_item, allDecks);
@@ -123,6 +132,10 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
             }
         });
 
+
+        DeckListAdapter adapter = new DeckListAdapter(isGuest,this, R.layout.deck_lv_item, allDecks);
+        lvDecks.setAdapter(adapter);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -139,10 +152,8 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
                 else {
                     //switch decks
                     inPublic = false;
-                    Log.d("chk_clickMyDecks", "keys: " + myDeckKeys + "  keyedDeck: " + keyedDecks.toString() + " personalDeck: " + personalDecks.toString());
                     publicDecks.setTextAppearance(this, android.R.style.TextAppearance_Material_Body1);
                     myDecks.setTextAppearance(this, android.R.style.TextAppearance_Large);
-                    Log.d("chk_insideclick", personalDecks.toString());
                     MyDeckListAdapter adapter = new MyDeckListAdapter(isGuest,this, R.layout.deck_lv_item, personalDecks);
                     lvDecks.setAdapter(adapter);
                     switchToMine();
@@ -234,6 +245,7 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
     public void logout(){
         mAuth.signOut();
         Intent i = new Intent(PublicDecks.this, LoginActivity.class);
+        i.putExtra("allDecks", allDecks);
         startActivity(i);
     }
 
@@ -247,45 +259,6 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
         startActivity(i);
     }
 
-    //get all decks from firebase database:
-    public void readAllDecks(DatabaseReference rr, final OnGetDataListener listener){
-
-        ValueEventListener eventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String uid = ds.child("uid").getValue(String.class);
-                    String author = ds.child("author").getValue(String.class);
-                    String title = ds.child("title").getValue(String.class);
-                    List<List<String>> cards = (List<List<String>>) ds.child("cards").getValue();
-                    String did = ds.child("deckId").getValue(String.class);
-                    Deck thisDeck = new Deck(did, uid, title, author, cards);
-                    allDecks.add(thisDeck);
-                }
-                listener.onSuccess(dataSnapshot);
-                if(!isGuest) {
-                    DatabaseReference thisUser = rootRef.getReference("Users").child(mAuth.getCurrentUser().getUid())
-                            .child("MyDecks");
-                    getUserData(thisUser, new OnGetDataListener() {
-
-                        @Override
-                        public void onSuccess(DataSnapshot dataSnapshot) {
-                        }
-
-                        @Override
-                        public void onFailure() {
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                listener.onFailure();
-            }
-        };
-        rr.addListenerForSingleValueEvent(eventListener);
-    }
     public void switchToPublic(){
         inPublic = true;
     }

@@ -19,6 +19,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
  public class LoginActivity extends AppCompatActivity {
 
      private TextInputEditText edtEmail;
@@ -27,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
      private TextView btnGuest, btnSignup;
      private ProgressBar progressBar;
      private FirebaseAuth mAuth;
+     private ArrayList<Deck> allDecks = new ArrayList<>();
 
 
     @Override
@@ -45,6 +48,10 @@ import com.google.firebase.auth.FirebaseAuth;
         progressBar.setVisibility(View.INVISIBLE);
 
         mAuth = FirebaseAuth.getInstance();
+
+        allDecks = (ArrayList<Deck>) getIntent().getSerializableExtra("allDecks");
+
+
 
         btnGuest.setClickable(true);
         btnSignup.setClickable(true);
@@ -81,8 +88,8 @@ import com.google.firebase.auth.FirebaseAuth;
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Intent i = new Intent(LoginActivity.this, LoadingScreen.class);
-                            //get User object::
+                            Intent i = new Intent(LoginActivity.this, PublicDecks.class);
+                            i.putExtra("allDecks", allDecks);
                             startActivity(i);
                         }
                         else{
@@ -96,7 +103,8 @@ import com.google.firebase.auth.FirebaseAuth;
         btnGuest.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent i=new Intent(getApplicationContext(),LoadingScreen.class);
+                Intent i=new Intent(getApplicationContext(), PublicDecks.class);
+                i.putExtra("allDecks", allDecks);
                 startActivity(i);
             }
         });
@@ -105,6 +113,7 @@ import com.google.firebase.auth.FirebaseAuth;
             @Override
             public void onClick(View v){
                 Intent i = new Intent(getApplicationContext(),RegisterActivity.class);
+                i.putExtra("allDecks", allDecks);
                 startActivity(i);
             }
         });

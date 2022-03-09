@@ -28,11 +28,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     TextView btnRegister;
     ProgressBar progressBar;
     private FirebaseAuth mAuth;
+    private ArrayList<Deck> allDecks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        allDecks = (ArrayList<Deck>) getIntent().getSerializableExtra("allDecks");
 
         mAuth = FirebaseAuth.getInstance();
         btnRegister = (TextView) findViewById(R.id.tvRegisterUser);
@@ -122,6 +125,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                         progressBar.setVisibility(View.GONE);
                                         Intent i = new Intent(RegisterActivity.this, LoginActivity.class);
+                                        i.putExtra("allDecks", allDecks);
                                         startActivity(i);
                                     }
                                     else{
