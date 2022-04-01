@@ -131,7 +131,7 @@ public class AddCards extends AppCompatActivity implements View.OnClickListener 
                             FirebaseDatabase.getInstance().getReference("Users").child(deck.Uid).child("MyDecks").child(deckId).setValue(deckId);
 
 
-                            Intent i = new Intent(AddCards.this, PublicDecks.class);
+                            Intent i = new Intent(AddCards.this, MainActivity.class);
                             startActivity(i);
 
                         }

@@ -37,15 +37,6 @@ public class DeckListAdapter extends ArrayAdapter<Deck> {
 
         TextView author = (TextView) v.findViewById(R.id.tvDeckAuthor);
         TextView title = (TextView) v.findViewById(R.id.tvDeckName);
-        Spinner spinner = (Spinner) v.findViewById(R.id.ddEditDeck);
-
-        ArrayList<String> options = new ArrayList<>();
-        //populate spinner based on if the user is a guest:
-
-        options.add("Save");
-
-        ArrayAdapter spnAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, options);
-        spinner.setAdapter(spnAdapter);
 
         Deck myDeck = deck.get(position);
 

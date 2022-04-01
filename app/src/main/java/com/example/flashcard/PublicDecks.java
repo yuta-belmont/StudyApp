@@ -65,6 +65,11 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
 
         //check if current user is a guest:
         isGuest = checkGuest();
+         
+        if ((ArrayList<Deck>) getIntent().getSerializableExtra("allDecks") != null){
+            allDecks = (ArrayList<Deck>) getIntent().getSerializableExtra("allDecks");
+        }
+
         if (!isGuest) {
             DatabaseReference thisUser = rootRef.getReference("Users").child(mAuth.getCurrentUser().getUid())
                     .child("MyDecks");
@@ -79,7 +84,6 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
                 }
             });
         }
-        allDecks = (ArrayList<Deck>) getIntent().getSerializableExtra("allDecks");
 
 
         //get the users decks
@@ -102,6 +106,16 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
         publicDecks.setOnClickListener(this);
         logout.setOnClickListener(this);
 
+        try{
+            inPublic = getIntent().getBooleanExtra("isPublic", true);
+        }
+        catch(Exception e){
+        }
+
+        if ((ArrayList<Deck>) getIntent().getSerializableExtra("personalDecks") != null) {
+            personalDecks = (ArrayList<Deck>) getIntent().getSerializableExtra("personalDecks");
+        }
+
 
 
         if (inPublic){
@@ -111,6 +125,8 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
         }
         else{
             MyDeckListAdapter adapter = new MyDeckListAdapter(isGuest,this, R.layout.deck_lv_item, personalDecks);
+            publicDecks.setTextAppearance(this, android.R.style.TextAppearance_Material_Body1);
+            myDecks.setTextAppearance(this, android.R.style.TextAppearance_Large);
             lvDecks.setAdapter(adapter);
 
         }
@@ -131,10 +147,6 @@ public class PublicDecks extends AppCompatActivity implements View.OnClickListen
                 startActivity(i);
             }
         });
-
-
-        DeckListAdapter adapter = new DeckListAdapter(isGuest,this, R.layout.deck_lv_item, allDecks);
-        lvDecks.setAdapter(adapter);
 
     }
 
